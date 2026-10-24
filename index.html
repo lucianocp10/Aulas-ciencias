@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102b46">
+<title>Aplicações de Ciências · Luciano Costa</title>
+<style>
+:root{color-scheme:light;--ink:#102b46;--muted:#526779;--blue:#1765cf}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f3f7fb;color:var(--ink)}
+main{max-width:1100px;margin:auto;padding:64px 24px 40px}
+.eyebrow{font-size:.78rem;font-weight:750;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.05;letter-spacing:-.045em;margin:16px 0 20px;max-width:750px}
+.intro{font-size:1.12rem;color:var(--muted);line-height:1.65;max-width:660px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:20px;margin-top:36px}
+.card{background:#fff;border:1px solid #dbe5ef;border-top:5px solid var(--accent);border-radius:18px;padding:28px;display:flex;flex-direction:column;box-shadow:0 10px 30px #102b4609}
+.tag{font-weight:700;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.symbol{font-size:2.3rem;font-weight:750;line-height:1.2;margin:24px 0 12px;color:var(--accent)}
+h2{font-size:1.3rem;line-height:1.3;margin:0 0 12px}
+.card p{color:var(--muted);line-height:1.6;margin:0 0 24px}
+.card a{margin-top:auto;display:block;text-decoration:none;background:var(--ink);color:#fff;font-weight:700;padding:13px 16px;border-radius:10px;text-align:center}
+.card a:hover{background:var(--accent)}
+a:focus-visible{outline:3px solid #f4b740;outline-offset:5px}
+footer{border-top:1px solid #dbe5ef;margin-top:44px;padding-top:24px;color:var(--muted);font-size:.9rem;line-height:1.6}
+@media(max-width:600px){main{padding-top:36px}.card{padding:24px}.symbol{margin-top:16px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="eyebrow">Professor Luciano Costa</div>
+<h1>Ciências para explorar.</h1>
+<p class="intro">Escolha uma apresentação ou um modelo interativo e abra diretamente no navegador.</p>
+</header>
+<section class="grid" aria-label="Aplicações disponíveis">
+<article class="card" style="--accent:#087f68">
+<span class="tag">Biologia · Com imagens</span>
+<div class="symbol" aria-hidden="true">01</div>
+<h2>Reprodução assexuada</h2>
+<p>Apresentação com ilustrações, animações e quiz sobre os tipos de reprodução assexuada.</p>
+<a href="./reproducao_assexuada-1.html">Abrir apresentação ilustrada</a>
+</article>
+<article class="card" style="--accent:#1765cf">
+<span class="tag">Química · Modelo 3D</span>
+<div class="symbol" aria-hidden="true">NaCl</div>
+<h2>Cristal de cloreto de sódio</h2>
+<p>Explore a organização dos íons no cristal. Gire o modelo, ajuste o zoom e controle os elementos visíveis.</p>
+<a href="./repositorios/cristal-nacl/">Explorar cristal em 3D</a>
+</article>
+<article class="card" style="--accent:#7950b8">
+<span class="tag">Biologia · Versão alternativa</span>
+<div class="symbol" aria-hidden="true">02</div>
+<h2>Reprodução assexuada</h2>
+<p>Outra versão da apresentação, com esquemas animados e perguntas para revisar o conteúdo.</p>
+<a href="./reproducao_assexuada.html">Abrir versão alternativa</a>
+</article>
+</section>
+<footer>Materiais de Ciências · O modelo 3D requer acesso à internet e um navegador com suporte a WebGL.</footer>
+</main>
+</body>
+</html>
