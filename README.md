@@ -7,8 +7,11 @@ Materiais didáticos de Ciências do Professor Luciano Costa.
 | Aula | Apresentação | Documentação |
 | --- | --- | --- |
 | Reprodução assexuada — 8º ano | [Abrir](https://lucianocp10.github.io/Aulas-ciencias/reproducao-assexuada/) | [Ver detalhes](./reproducao-assexuada/README.md) |
+| Reprodução sexuada nos animais — 8º ano | [Abrir](https://lucianocp10.github.io/Aulas-ciencias/Reprodu%C3%A7%C3%A3o%20assexuada%20dos%20animais/) | [Ver detalhes](./Reprodu%C3%A7%C3%A3o%20assexuada%20dos%20animais/README.md) |
 
 [Visitar o catálogo de aulas](https://lucianocp10.github.io/Aulas-ciencias/).
+
+A aula de **reprodução sexuada nos animais** contém 23 telas para 60 minutos, modelos 3D, cinco questões de quiz e atividade final. O Three.js é carregado por CDN e requer internet para exibir os modelos 3D.
 
 ## Organização
 
