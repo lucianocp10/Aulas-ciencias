@@ -2,8 +2,6 @@
 
 Apresentação de Ciências do 8º ano — Professor Luciano Costa. 23 telas / 60 minutos.
 
-A pasta conserva o nome solicitado, mas o conteúdo desta apresentação é reprodução **sexuada**. A apresentação assexuada anterior permanece em `../reproducao-assexuada/`.
-
 ## Uso
 Abra `index.html` no navegador ou pelo GitHub Pages. Setas e botões navegam; o menu permite escolher uma tela. As cenas têm avanço de etapas, reinício e pausa de rotação. Arraste o modelo para girar. Há redução de movimento, tela cheia e notas do professor.
 
