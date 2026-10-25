@@ -1,4 +1,8 @@
-# Tipos de reprodução — Reprodução assexuada
+# Aulas de Ciências
+
+Materiais didáticos de Ciências do Professor Luciano Costa.
+
+## Tipos de reprodução — Reprodução assexuada
 
 Apresentação interativa em HTML para aulas de **Ciências do 8º ano do Ensino Fundamental**, com ilustrações, esquemas animados e quiz de revisão.
 
@@ -8,9 +12,9 @@ Apresentação interativa em HTML para aulas de **Ciências do 8º ano do Ensino
 
 ### Acesso direto pelo navegador
 
-**[▶ Abrir a apresentação de reprodução assexuada](https://lucianocp10.github.io/Testes-iniciais/reproducao_assexuada-1.html)**
+**[▶ Abrir a apresentação de reprodução assexuada](https://lucianocp10.github.io/Aulas-ciencias/reproducao_assexuada-1.html)**
 
-A apresentação também pode ser acessada pelo [menu de aplicações de Ciências](https://lucianocp10.github.io/Testes-iniciais/).
+A apresentação também pode ser acessada pelo [menu de aplicações de Ciências](https://lucianocp10.github.io/Aulas-ciencias/).
 
 ### Uso offline
 
@@ -101,7 +105,7 @@ Os desenhos e as animações são representações simplificadas, sem escala bio
 | [index.html](./index.html) | Menu de acesso às aplicações de Ciências do repositório |
 | [README.md](./README.md) | Documentação desta apresentação |
 
-O repositório também contém o projeto [Cristal de NaCl em 3D](./repositorios/cristal-nacl/README.md), com documentação própria.
+Os experimentos de NaCl e respiração estão em [Testes iniciais](https://github.com/lucianocp10/Testes-iniciais).
 
 ## Tecnologias
 
