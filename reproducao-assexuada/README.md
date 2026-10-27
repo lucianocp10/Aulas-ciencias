@@ -84,6 +84,29 @@ Nos slides animados, um comando de avanço pode revelar a próxima etapa da expl
 
 A pontuação é mantida apenas durante a sessão aberta. O arquivo não envia notas, não cadastra alunos e não salva respostas após recarregar ou fechar a página.
 
+## Sugestões de vídeos para a aula
+
+### Reprodução por brotamento
+
+- [Hidra](https://www.youtube.com/embed/wfbhwq95Duc)
+- [Leveduras](https://www.youtube.com/watch?v=KeTOM2iVGeI)
+
+### Fragmentação e regeneração
+
+- [Planária — vídeo 1](https://www.youtube.com/watch?v=GhJFyCpgyFA)
+- [Planária — vídeo 2](https://www.youtube.com/watch?v=RhBWNQ2JNnQ)
+
+### Fissão / divisão binária
+
+- [Ameba](https://www.youtube.com/shorts/dfuKVhfP9zc)
+- [Bactéria — vídeo 1](https://www.youtube.com/shorts/UmFUSEFlLjI)
+- [Bactéria — vídeo 2](https://www.youtube.com/shorts/ux-HQMvUFU4)
+
+### Esporulação
+
+- [Fungos — vídeo 1](https://www.youtube.com/watch?v=W6e5eBDgFrA)
+- [Fungos — vídeo 2](https://www.youtube.com/shorts/Gh-lBTe_kbA)
+
 ## Observações didáticas
 
 Os desenhos e as animações são representações simplificadas, sem escala biológica. Durante a explicação, destaque que:
