@@ -1,6 +1,6 @@
 # Reprodução sexuada das plantas e variabilidade genética
 
-Apresentação interativa de Ciências para o 8º ano, Professor Luciano Costa, baseada nas seções 3 e 4 do capítulo 2 do material fornecido.
+Apresentação interativa de Ciências para o 8º ano, Professor Luciano Costa, baseada no material de Ciências fornecido pelo professor.
 
 [Abrir a apresentação](https://lucianocp10.github.io/Aulas-ciencias/reproducao-sexuada-plantas/)
 
@@ -11,3 +11,6 @@ O arquivo index.html é autônomo: baixe-o e abra em navegador atualizado para u
 Sugestão: destinar cerca de duas aulas, adaptando a discussão e a atividade final ao ritmo da turma. A reprodução das angiospermas é uma representação geral; há diversidade e exceções.
 
 Validação: sintaxe JavaScript verificada. A renderização e os controles devem ser conferidos no navegador e no dispositivo de projeção.
+
+## Fotografias
+A apresentação incorpora fotografias do material didático fornecido: musgos, samambaias e soros, araucárias e estróbilos, pinhão, flor, borboleta, formação do tomate, germinação e dispersão. Os créditos autorais permanecem na fonte original. As fotografias estão incorporadas ao HTML para uso offline; os processos internos continuam representados por esquemas.
