@@ -2,6 +2,10 @@
 
 Apresentação de Ciências do 8º ano — Professor Luciano Costa. São 22 telas, incluindo cinco questões de quiz e uma atividade final.
 
+## Abrir a apresentação
+
+[▶ Abrir a apresentação de reprodução sexuada nos animais](https://lucianocp10.github.io/Aulas-ciencias/reproducao-sexuada-animais/)
+
 ## Uso
 
 Abra `index.html` no navegador ou pelo GitHub Pages, mantendo a pasta `imagens` junto ao arquivo. As setas do teclado e os botões navegam; o menu permite escolher uma tela. Nas sequências de metamorfose, avance por etapas ou reproduza a sequência automaticamente. Há opção de tela cheia e respeito à preferência de redução de movimento do dispositivo.
