@@ -12,7 +12,7 @@ Materiais didáticos de Ciências do Professor Luciano Costa.
 
 [Visitar o catálogo de aulas](https://lucianocp10.github.io/Aulas-ciencias/).
 
-A aula de **reprodução sexuada nos animais** contém 23 telas para 60 minutos, modelos 3D, cinco questões de quiz e atividade final. O Three.js é carregado por CDN e requer internet para exibir os modelos 3D.
+A aula de **reprodução sexuada nos animais** contém 22 telas, imagens, sequências sobre metamorfose, cinco questões de quiz e atividade final.
 
 ## Organização
 
