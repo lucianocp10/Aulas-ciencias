@@ -12,6 +12,29 @@ Abra `index.html` no navegador ou pelo GitHub Pages, mantendo a pasta `imagens` 
 
 As imagens incluem ilustrações geradas por inteligência artificial. No quiz, selecione uma opção e clique em Conferir resposta.
 
+## Vídeos curtos — Reprodução sexuada dos animais (8º ano)
+
+### Metamorfose da borboleta
+
+- [Monarch Butterfly Metamorphosis time-lapse FYV](https://www.youtube.com/watch?v=ocWgSgMGxOc) — 2:43
+
+### Metamorfose da rã/sapo
+
+- [Ciclo de vida do sapo — Aprendendo em Foco](https://www.youtube.com/watch?v=q6oKLjRLLTU) — 2:07
+
+### Rituais de corte e acasalamento
+
+- [Aves do Paraíso — Dança do Acasalamento](https://www.youtube.com/watch?v=S9re0dNAZpY) — 2:48
+
+### Fecundação e união dos gametas
+
+- [Um jeito divertido de entender a fecundação — DW Brasil](https://www.youtube.com/watch?v=mhmcTP_rz2M) — 3:03
+
+### Reprodução dos cavalos-marinhos
+
+- [Reprodução dos cavalos-marinhos 1](https://youtube.com/shorts/TA976KiynzM?is=Go4FDlEkUtxl6bSD)
+- [Reprodução dos cavalos-marinhos 2](https://youtube.com/shorts/T4KswBBB0Sg?is=BbCDqNnRYnn17j9Q)
+
 ## Referência
 
 https://openstax.org/books/biology-2e/pages/43-2-fertilization
