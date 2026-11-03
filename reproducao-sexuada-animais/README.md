@@ -1,6 +1,6 @@
 # Reprodução sexuada nos animais
 
-Apresentação de Ciências do 8º ano — Professor Luciano Costa. São 22 telas, incluindo cinco questões de quiz e uma atividade final.
+Apresentação de Ciências do 8º ano — Professor Luciano Costa. São 23 telas, incluindo cinco questões de quiz e uma atividade final.
 
 ## Abrir a apresentação
 
