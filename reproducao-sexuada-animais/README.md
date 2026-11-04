@@ -12,6 +12,12 @@ Abra `index.html` no navegador ou pelo GitHub Pages, mantendo a pasta `imagens` 
 
 As imagens incluem ilustrações geradas por inteligência artificial. No quiz, selecione uma opção e clique em Conferir resposta.
 
+## Partenogênese (tela 17)
+
+Depois de "Por que mudar de forma?", a tela 17 trata da partenogênese com um esquema das abelhas: a rainha põe ovos fecundados, que geram fêmeas (operárias ou novas rainhas), e ovos sem fecundação, que geram zangões. Duas fotos pequenas lembram que o processo também foi registrado em píton e em dragão-de-Komodo.
+
+Fotos: Charles J. Sharp (dragão-de-Komodo) e Shadow Ayush (píton), CC BY-SA 4.0, via Wikimedia Commons.
+
 ## Vídeos curtos — Reprodução sexuada dos animais (8º ano)
 
 ### Metamorfose da borboleta
