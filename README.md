@@ -9,6 +9,7 @@ Materiais didáticos de Ciências do Professor Luciano Costa.
 | Reprodução assexuada — 8º ano | [Abrir](https://lucianocp10.github.io/Aulas-ciencias/reproducao-assexuada/) | [Ver detalhes](./reproducao-assexuada/README.md) |
 | Reprodução sexuada nos animais — 8º ano | [Abrir](https://lucianocp10.github.io/Aulas-ciencias/reproducao-sexuada-animais/) | [Ver detalhes](./reproducao-sexuada-animais/README.md) |
 | Reprodução sexuada das plantas e variabilidade — 8º ano | [Abrir](https://lucianocp10.github.io/Aulas-ciencias/reproducao-sexuada-plantas/) | [Ver detalhes](./reproducao-sexuada-plantas/README.md) |
+| Puberdade, hormônios e reprodução humana — 8º ano | [Abrir](https://lucianocp10.github.io/Aulas-ciencias/Puberdade%20e%20Reprodu%C3%A7%C3%A3o%20Humana/) | [Ver detalhes](./Puberdade%20e%20Reprodu%C3%A7%C3%A3o%20Humana/README.md) |
 
 [Visitar o catálogo de aulas](https://lucianocp10.github.io/Aulas-ciencias/).
 
