@@ -288,40 +288,6 @@ body.reduced *,body.reduced *::before,body.reduced *::after{animation:none!impor
   .cover-cards{gap:12px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
-.cover-actions,.project-bar{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
-.cover-actions button{padding:12px 18px;font-size:clamp(16px,1.6vw,20px)}
-.model-label{font-weight:700;color:var(--gold);margin:12px 0 0}
-.vote-box,.review-prompt{background:var(--panel);border:1px solid #476779;border-radius:18px;padding:clamp(16px,2vw,30px);margin-top:16px}
-.vote-box .controls{justify-content:flex-start}
-.vote-box h2{margin:8px 0}.vote-box p{margin:8px 0}
-#voteFeedback:not(:empty){padding:10px 0;color:#baf3dd;font-weight:650}
-.review-prompt>p:last-child{font-size:clamp(24px,3vw,40px);line-height:1.35;margin:.55em 0}
-@keyframes lengthen{from{transform:scaleY(.65)}to{transform:scaleY(1)}}
-@keyframes receptor-response{from{opacity:0}to{opacity:1}}
-.cell-response{animation:receptor-response .3s 1.5s both}
-.growing-bone{animation:lengthen 2.6s ease-out both;transform-origin:0 0}
-.project-bar{margin-bottom:8px}
-.zoom-only{display:none}
-.projecting .zoom-only{display:block}
-.projecting main{max-width:1440px;padding:1vh 2vw}
-.projecting #main .slide-enter>h1,.projecting #main .eyebrow,.projecting .layout>:first-child,.projecting details.notes{display:none}
-.projecting .layout{display:block}
-.projecting #projectPanel{min-height:0;padding:8px 12px}
-.projecting #projName{font-size:clamp(24px,3.4vh,42px);color:var(--gold);text-align:center;margin:0}
-.projecting #projectPanel svg{height:clamp(230px,52vh,750px);max-height:none}
-.projecting #projectPanel:not(.all-labels) .diagram-label[data-highlight="false"]{display:none}
-.projecting .caption{font-size:15px;margin:5px 0}
-.projecting .stepcap{margin:4px 0;min-height:0}
-.projecting .controls{margin:5px 0}
-@media(max-width:650px){
-  header{padding:6px 3vw;gap:5px} header>span{display:none}
-  header select{width:100%;max-width:none} header nav{gap:4px}
-  header button{font-size:13px;padding:5px 8px}
-  .cover-cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-  .cover figcaption{font-size:13px}
-  .projecting #projectPanel svg{height:auto;min-height:190px}
-}
 </style>
 </head>
 <body>
@@ -340,7 +306,6 @@ body.reduced *,body.reduced *::before,body.reduced *::after{animation:none!impor
   <select id="menu" aria-label="Selecionar slide"></select>
   <nav>
     <span id="count" class="slide-count" aria-live="polite">1 / 26</span>
-    <button id="returnQuiz" hidden>↩ Voltar à questão</button>
     <button id="prev">← Anterior</button>
     <button id="next">Próxima →</button>
     <button id="motion">Reduzir movimento</button>
@@ -357,13 +322,6 @@ const $ = id => document.getElementById(id);
 let current = 0;
 let sub = 0;
 let timers = [];
-const pageStates = new Map();
-function pageState(){
-  if(!pageStates.has(current)) pageStates.set(current, {});
-  return pageStates.get(current);
-}
-let reviewing = null;
-let quizOnly = false;
 let reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const answers = {};
 document.body.classList.toggle('reduced', reduced);
@@ -395,16 +353,14 @@ function noteBox(txt){
 }
 
 function stepper(caps, draw, ms = 3200){
-  let i = pageState().step ?? 0, timer = null;
+  let i = 0, timer = null;
   const n = caps.length;
   $('ctl').innerHTML = '<button id="sb">← Etapa anterior</button><button id="sp">▶ Reproduzir sequência</button><button id="sn">Próxima etapa →</button><button id="sr">Reiniciar</button>';
   const upd = () => {
-    pageState().step = i;
     $('sv').innerHTML = draw(i);
     $('sc').textContent = caps[i];
     $('sb').disabled = i === 0;
     $('sn').disabled = i === n - 1;
-    if($('projName')) syncProjection();
   };
   const stop = () => {
     if(timer){ clearInterval(timer); timer = null; }
@@ -440,7 +396,7 @@ function box(x, y, w, h, lines, col, on = true, fs = 18){
   return '<g opacity="' + (on ? 1 : .13) + '"' + (on ? ' class="fade"' : '') + '><rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="14" fill="#0d2940" stroke="' + col + '" stroke-width="2.5"/>' + lines.map((t, k) => '<text x="' + (x + w / 2) + '" y="' + (ly + k * fs * 1.2 + fs * .35) + '" text-anchor="middle" fill="' + (k ? '#dbe7f3' : col) + '" font-size="' + (k ? fs - 3 : fs) + '" font-weight="' + (k ? 400 : 700) + '">' + t + '</text>').join('') + '</g>';
 }
 function label(x, y, t, x2, y2, on = false, anchor = 'start'){
-  return '<g class="diagram-label" data-highlight="' + on + '"><line x1="' + x2 + '" y1="' + y2 + '" x2="' + (anchor === 'start' ? x - 4 : x + 4) + '" y2="' + (y - 5) + '" stroke="' + (on ? '#ffcf6e' : '#9fb7c8') + '" stroke-width="1.5"/><text x="' + x + '" y="' + y + '" font-size="16.5" fill="' + (on ? '#ffcf6e' : '#d6e4ef') + '" font-weight="' + (on ? 700 : 400) + '" text-anchor="' + anchor + '">' + t + '</text></g>';
+  return '<g><line x1="' + x2 + '" y1="' + y2 + '" x2="' + (anchor === 'start' ? x - 4 : x + 4) + '" y2="' + (y - 5) + '" stroke="' + (on ? '#ffcf6e' : '#9fb7c8') + '" stroke-width="1.5"/><text x="' + x + '" y="' + y + '" font-size="16.5" fill="' + (on ? '#ffcf6e' : '#d6e4ef') + '" font-weight="' + (on ? 700 : 400) + '" text-anchor="' + anchor + '">' + t + '</text></g>';
 }
 const sperm = (x, y, s = 1, anim = true) => '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path class="' + (anim ? 'wig' : '') + '" d="M-22,0 q-18,-13 -36,0 t-36,0 t-36,0" fill="none" stroke="#76ead3" stroke-width="5" stroke-linecap="round"/><ellipse rx="24" ry="15" fill="#76ead3"/><ellipse cx="4" rx="12" ry="8" fill="#47769d"/></g>';
 function person(x, h, col, cls = 'bob', delay = 0){
@@ -467,10 +423,7 @@ function coverHTML(){
       <figure><div class="cover-card">${brain}</div><figcaption>2. Hormônios comandam</figcaption></figure>
       <figure><div class="cover-card">${cycle}</div><figcaption>3. Genitais e ciclo</figcaption></figure>
     </div>
-    <div class="cover-actions">
-      <button class="start-btn" onclick="go(1)">Aula 1 · Puberdade e hormônios →</button>
-      <button onclick="go(10)">Aula 2 · Sistemas genitais e ciclo →</button>
-    </div>
+    <div class="cover-actions"><button class="start-btn" onclick="go(1)">Iniciar a história →</button></div>
     <p class="cover-credit">Ciências · 8º ano · Capítulo 3 (Parte 1) · Professor Luciano Costa</p>
   </section>`;
 }
@@ -626,19 +579,11 @@ function maleSVG(i){
   g += '<g' + hl(1) + '><path d="M222,290 C204,300 204,345 222,360" stroke="#a8674f" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M378,290 C396,300 396,345 378,360" stroke="#a8674f" stroke-width="11" fill="none" stroke-linecap="round"/></g>';
   g += '<g' + hl(2) + '><path d="' + MALE_PATHS[2] + '" stroke="#9ec5ff" stroke-width="6" fill="none"/><path d="M385,362 C425,330 425,220 395,150 C378,112 338,125 308,150" stroke="#9ec5ff" stroke-width="6" fill="none"/></g>';
   g += '<g' + hl(4) + '><path d="M282,172 L282,330 Q300,360 318,330 L318,172Z" fill="#e7b49b"/><path d="M300,128 L300,348" stroke="#fff1b8" stroke-width="5"/></g>';
-  for(const path of MALE_PATHS.slice(0,i+1)){
-    g += `<path d="${path}" fill="none" stroke="#92f8dd" stroke-width="3" stroke-dasharray="5 4"/>`;
+  if(!reduced){
+    g += '<g><circle r="6" fill="#76ead3" stroke="#08303a" stroke-width="2">' + motion(MALE_PATHS[i]) + '</circle></g>';
+    if(i < 4) g += '<g transform="translate(600 0) scale(-1 1)"><circle r="6" fill="#76ead3" stroke="#08303a" stroke-width="2">' + motion(MALE_PATHS[i]) + '</circle></g>';
   }
-  const last = ['240 352','220 360','292 150','300 178','300 348'][i].split(' ');
-  g += reduced ? `<circle cx="${last[0]}" cy="${last[1]}" r="6" fill="#76ead3"/>`
-    : `<circle r="6" fill="#76ead3" stroke="#08303a" stroke-width="2">${motion(MALE_PATHS[i])}</circle>`;
-  if(i >= 3){
-    for(const [route,x,y] of [['M234 132 Q254 140 294 151',287,149],['M324 157 Q313 164 300 171',305,168]]){
-      g += `<path d="${route}" fill="none" stroke="#ffcf6e" stroke-width="3"/>`;
-      g += !reduced && i === 3 ? `<circle r="5" fill="#ffcf6e">${motion(route)}</circle>` : `<circle cx="${x}" cy="${y}" r="5" fill="#ffcf6e"/>`;
-    }
-  }
-  g += label(392, 38, 'bexiga urinária (sistema urinário)', 350, 62) + label(170, 108, 'glândula seminal', 212, 120, i === 3, 'end') + label(430, 160, 'próstata', 336, 153, i === 3) + label(152, 222, 'ducto deferente', 182, 232, i === 2, 'end') + label(430, 236, 'uretra (no pênis)', 304, 236, i === 4) + label(122, 302, 'epidídimo', 208, 318, i === 1, 'end') + label(430, 318, 'testículo (túbulos seminíferos)', 390, 322, i === 0) + label(430, 392, 'escroto', 384, 370);
+  g += label(392, 38, 'bexiga urinária (sistema urinário)', 350, 62) + label(30, 108, 'glândula seminal', 212, 120, i === 3) + label(430, 160, 'próstata', 336, 153, i === 3) + label(28, 222, 'ducto deferente', 182, 232, i === 2) + label(430, 236, 'uretra (no pênis)', 304, 236, i === 4) + label(28, 302, 'epidídimo', 208, 318, i === 1) + label(430, 318, 'testículo (túbulos seminíferos)', 390, 322, i === 0) + label(430, 392, 'escroto', 384, 370);
   return svg('0 0 680 420', g, 'Sistema genital masculino em vista frontal esquemática');
 }
 
@@ -661,42 +606,16 @@ function femaleBase(sel, click = false){
 }
 function femaleSVG(sel){
   const on = k => sel === k;
-  return svg('0 0 600 400', femaleBase(sel, true) + label(128, 70, 'tuba uterina', 150, 95, on('tuba'), 'end') + label(88, 215, 'ovário', 118, 178, on('ovario'), 'end') + label(430, 40, 'útero', 360, 98, on('utero')) + label(400, 215, 'endométrio', 336, 170, on('endometrio')) + label(400, 268, 'colo do útero', 320, 262, on('colo')) + label(400, 350, 'vagina', 318, 345, on('vagina')), 'Sistema genital feminino em corte frontal esquemático');
+  return svg('0 0 600 400', femaleBase(sel, true) + label(20, 70, 'tuba uterina', 150, 95, on('tuba')) + label(20, 215, 'ovário', 118, 178, on('ovario')) + label(430, 40, 'útero', 360, 98, on('utero')) + label(400, 215, 'endométrio', 336, 170, on('endometrio')) + label(400, 268, 'colo do útero', 320, 262, on('colo')) + label(400, 350, 'vagina', 318, 345, on('vagina')), 'Sistema genital feminino em corte frontal esquemático');
 }
-const externalNames = ['púbis','clitóris','abertura da uretra','orifício vaginal','lábio menor','lábio maior','ânus'];
-function vulvaSVG(selected = null){
+function vulvaSVG(){
   let g = '<ellipse cx="210" cy="215" rx="95" ry="150" fill="#d99393"/><ellipse cx="210" cy="225" rx="50" ry="112" fill="#c27080"/><circle cx="210" cy="118" r="9" fill="#f4a9b8"/>';
   g += '<ellipse cx="210" cy="172" rx="5" ry="4" fill="#3f1824"/><circle cx="210" cy="172" r="15" fill="none" stroke="#5cc8ff" stroke-width="3" class="pulse"/>';
   g += '<ellipse cx="210" cy="240" rx="17" ry="32" fill="#3f1824"/><ellipse cx="210" cy="240" rx="27" ry="42" fill="none" stroke="#ff9fbb" stroke-width="3" class="pulse" style="animation-delay:.8s"/>';
   g += '<circle cx="210" cy="395" r="10" fill="#6b3a3a"/><path d="M150,55 Q210,40 270,55" stroke="#d99393" stroke-width="10" fill="none"/>';
-  [[58,265,56],[122,220,118],[176,226,172],[244,238,240],[300,255,290],[350,290,320],[400,222,395]].forEach(([y,x2,y2], j) => {
-    g += label(312,y,externalNames[j],x2,y2,selected === null ? j === 2 || j === 3 : j === selected);
-  });
+  g += label(312, 58, 'púbis', 265, 56) + label(312, 122, 'clitóris', 220, 118) + label(312, 176, 'abertura da uretra', 226, 172, true) + label(312, 244, 'orifício vaginal', 238, 240, true) + label(312, 300, 'lábio menor', 255, 290) + label(312, 350, 'lábio maior', 290, 320) + label(312, 400, 'ânus', 222, 395);
   return svg('0 0 520 420', g, 'Representação simplificada do órgão genital externo feminino');
 }
-function receptorSVG(step){
-  const active = step === 2;
-  const paths = ['M90 142 L153 142','M153 142 L340 142','M340 142 Q382 132 424 90'];
-  const ends = ['153 142','340 142','424 90'];
-  const dot = reduced
-    ? `<circle cx="${ends[step].split(' ')[0]}" cy="${ends[step].split(' ')[1]}" r="11" fill="#ffcf6e"/>`
-    : `<circle r="11" fill="#ffcf6e"><animateMotion dur="1.5s" fill="freeze" path="${paths[step]}"/></circle>`;
-  return svg('0 0 640 280', `
-    <rect x="104" y="117" width="220" height="50" rx="22" fill="#64293c" stroke="#f697ac" stroke-width="3"/>
-    <ellipse cx="70" cy="142" rx="46" ry="54" fill="#354465" stroke="#ffcf6e" stroke-width="3"/>
-    <text x="70" y="222" text-anchor="middle" fill="#ffcf6e" font-size="20">Glândula</text>
-    <text x="219" y="99" text-anchor="middle" fill="#f5bfd2" font-size="20">Sangue</text>
-    <defs><path id="cellA" d="M418 54 Q418 40 435 40 H578 Q608 40 608 65 V108 Q608 135 580 135 H437 Q418 135 418 117 V104 Q448 90 418 76Z"/></defs>
-    <use href="#cellA" fill="#193749" stroke="#a2bdd1" stroke-width="4"/>
-    ${active ? '<use class="cell-response" href="#cellA" fill="#216052" stroke="#78f1c2" stroke-width="4"/>' : ''}
-    <path d="M418 187 Q418 170 437 170 H578 Q608 170 608 195 V226 Q608 255 580 255 H437 Q418 255 418 237 V227 L445 212 L418 197Z"
-      fill="#193749" stroke="#a2bdd1" stroke-width="4"/>
-    <text x="522" y="84" text-anchor="middle" fill="#fff" font-size="23">Célula A</text>
-    <text class="cell-response" x="522" y="112" text-anchor="middle" fill="#aff5d8" font-size="16">${active ? 'Resposta ativada' : ''}</text>
-    <text x="522" y="221" text-anchor="middle" fill="#fff" font-size="23">Célula B</text>
-    ${dot}`, 'Uma molécula circula no sangue e encontra dois receptores de formatos diferentes');
-}
-
 function cycleSVG(d){
   let g = '<text x="180" y="30" text-anchor="middle" fill="#ffcf6e" font-size="19" font-weight="700">Ovário</text><text x="570" y="30" text-anchor="middle" fill="#ffcf6e" font-size="19" font-weight="700">Útero · endométrio</text>';
   g += '<ellipse cx="180" cy="150" rx="150" ry="95" fill="#f6c48b" stroke="#ffe0b5" stroke-width="2"/>';
@@ -705,12 +624,8 @@ function cycleSVG(d){
     const r = 14 + d * 3.3;
     g += '<circle cx="180" cy="150" r="' + r + '" fill="#ffe7b0" stroke="#fff6d8" stroke-width="2"/><circle cx="' + (180 + r * .35) + '" cy="' + (150 - r * .3) + '" r="9" fill="#b58cf0"/><text x="180" y="' + (150 + r + 22) + '" text-anchor="middle" fill="#5a3410" font-size="16" font-weight="700">folículo em crescimento</text>';
   } else if(d === 14){
-    g += '<path d="M140 190 A55 55 0 1 1 222 108" fill="#ffe7b0" stroke="#fff6d8" stroke-width="2"/>';
-    g += '<path d="M305 105 Q333 70 380 80 M308 110 Q335 81 380 92" fill="none" stroke="#f9a5b7" stroke-width="5"/>';
-    g += '<path d="M315 99 q-10 -10 -22 -8 m22 8 q-12 -2 -23 4 m19 0 q-6 9 -18 15" fill="none" stroke="#ffd2db" stroke-width="4" stroke-linecap="round"/>';
-    g += '<text x="295" y="48" fill="#ffd2db" font-size="16">Fímbrias da tuba</text><path d="M325 55 L307 88" fill="none" stroke="#ffd2db"/>';
-    g += reduced ? '<circle cx="332" cy="89" r="9" fill="#b58cf0" stroke="white"/>' : '<circle r="9" fill="#b58cf0" stroke="white"><animateMotion dur="2.2s" fill="freeze" path="M203 119 Q245 139 293 104 Q313 96 332 89"/></circle>';
-    g += '<text x="180" y="270" text-anchor="middle" fill="#ffe066" font-size="18" font-weight="700">Ovulação</text>';
+    g += '<path d="M140,190 A55,55 0 1 1 222,108" fill="#ffe7b0" stroke="#fff6d8" stroke-width="2"/><g><circle r="10" fill="#b58cf0" stroke="#fff" stroke-width="2" cx="0" cy="0">' + (reduced ? '' : '<animateMotion dur="2.2s" repeatCount="indefinite" path="M200,120 C240,70 290,50 335,48"/>') + '</circle></g><text x="180" y="270" text-anchor="middle" fill="#ffe066" font-size="16" font-weight="700">ovulação: o ovócito sai do ovário</text>';
+    if(reduced) g += '<circle cx="300" cy="55" r="10" fill="#b58cf0"/>';
   } else if(d <= 24){
     g += '<circle cx="180" cy="150" r="42" fill="#f2c230" stroke="#fff1a8" stroke-width="2"/><text x="180" y="215" text-anchor="middle" fill="#5a3410" font-size="16" font-weight="700">corpo lúteo</text>';
   } else {
@@ -745,13 +660,13 @@ function phase(d){
   if(d === 14) return '<b>Ovulação · por volta do 14º dia</b>Sob a ação do <strong>LH</strong>, também produzido pela hipófise, o folículo se rompe e libera o ovócito secundário na tuba uterina.';
   return '<b>Fase secretória</b>O folículo rompido transforma-se em <strong>corpo lúteo</strong>, que produz estrógenos e <strong>progesterona</strong>. A progesterona estimula o desenvolvimento de vasos sanguíneos no endométrio, preparando-o para receber um embrião.' + (d >= 25 ? ' Sem fecundação, o ovócito degenera, o corpo lúteo vira corpo albicante, a progesterona cai e um novo ciclo começa.' : '');
 }
-function hormSVG(i, outcome = null){
+function hormSVG(i){
   const G = '#ffcf6e', K = '#ff85ae', U = '#b99af2', T = '#4ce5c4', R = '#ff7a92', B = '#5cc8ff';
   let g = box(20, 20, 200, 80, ['Hipófise','libera FSH'], G, i >= 0) + arrow(220, 60, 288, 60, i >= 0, K) + box(290, 20, 220, 80, ['Folículo ovariano','cresce'], K, i >= 0) + arrow(510, 60, 578, 60, i >= 1, U) + box(580, 20, 200, 80, ['Estrógenos','endométrio cresce'], U, i >= 1);
   g += box(20, 150, 200, 80, ['Hipófise','libera LH'], G, i >= 2) + arrow(220, 190, 288, 190, i >= 2, '#ffe066') + box(290, 150, 220, 80, ['Ovulação','≈ 14º dia'], '#ffe066', i >= 2) + arrow(510, 190, 578, 190, i >= 3, T) + box(580, 150, 200, 80, ['Corpo lúteo','progesterona + estrógenos'], T, i >= 3, 17);
-  if(i === 3 && outcome === 'sem') g += arrow(640,232,260,290,true,R) + box(20,292,370,100,['Sem gravidez','O corpo lúteo regride','A progesterona cai e há menstruação'],R,true,18);
-  if(i === 3 && outcome === 'com') g += arrow(700,232,600,290,true,B) + box(410,292,370,100,['Com fecundação e implantação','O hCG mantém o corpo lúteo ativo','O endométrio é mantido'],B,true,18);
-  return svg(outcome && i === 3 ? '0 0 800 400' : '0 0 800 245', g, 'Hormônios que regulam o ciclo menstrual');
+  g += arrow(640, 232, 260, 290, i >= 4, R) + box(20, 292, 370, 100, ['Sem fecundação','corpo lúteo → corpo albicante','progesterona cai → menstruação'], R, i >= 4, 18);
+  g += arrow(700, 232, 600, 290, i >= 5, B) + box(410, 292, 370, 100, ['Com fecundação','hCG mantém o corpo lúteo ativo','sem menstruação e sem ovulação'], B, i >= 5, 18);
+  return svg('0 0 800 400', g, 'Hormônios que regulam o ciclo menstrual');
 }
 function lifeSVG(){
   const X = a => 40 + a * 7.75;
@@ -764,7 +679,7 @@ function lifeSVG(){
   return svg('0 0 700 240', g, 'Linha da vida reprodutiva da mulher');
 }
 
-/* Telas de conteúdo. A ordem das duas aulas é definida junto ao quiz. */
+/* ---------- Definição das 18 Telas de Conteúdo + 5 Quiz + 1 Atividade Final = 24 Telas ---------- */
 const slides = [
   { id:'cover', menu:'Capa', raw:coverHTML },
 
@@ -844,12 +759,11 @@ const slides = [
       ];
       const cls = ['mint','masc','fem'];
       const sel = k => {
-        pageState().part = k;
         document.querySelectorAll('#ptabs button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.t === k));
         $('plist').innerHTML = '<div class="grid">' + T[k].map(c => '<div class="card ' + cls[k] + '"><div class="ico">' + c[0] + '</div><p>' + c[1] + '</p></div>').join('') + '</div>';
       };
       document.querySelectorAll('#ptabs button').forEach(b => b.onclick = () => sel(+b.dataset.t));
-      sel(pageState().part ?? 0);
+      sel(0);
     }
   },
 
@@ -882,13 +796,22 @@ const slides = [
         <div class="pt">Eles viajam pela <strong>corrente sanguínea</strong> por todo o corpo.</div>
         <div class="pt">Só agem nos <strong>órgãos-alvo</strong> que têm o “encaixe” certo (receptores).</div>
       </div>
-      ${scene('Modelo de dois receptores na superfície celular.')}
-    </div>`,
-    init: () => stepper([
-      '1. A glândula libera uma molécula de hormônio no sangue.',
-      '2. A molécula chega ao tecido. Qual das duas células tem um receptor com formato compatível?',
-      '3. O hormônio se liga ao receptor da célula A e desencadeia uma resposta nessa célula.'
-    ], receptorSVG, 6500)
+      <div class="art">
+        <svg viewBox="0 0 500 300" role="img" aria-label="Hormônios viajando no vaso sanguíneo até o órgão-alvo">
+          <circle cx="75" cy="150" r="46" fill="#2b3f6b" stroke="#ffcf6e" stroke-width="3" class="a-pulse"/>
+          <text x="75" y="155" fill="#ffcf6e" font-size="15" font-weight="700" text-anchor="middle">Glândula</text>
+          <rect x="120" y="118" width="250" height="64" rx="12" fill="#5e1f30" stroke="#ff6b8b" stroke-width="3"/>
+          <line x1="135" y1="150" x2="355" y2="150" stroke="#ffcf6e" stroke-width="4" class="a-flow"/>
+          <circle cx="170" cy="138" r="7" fill="#ffcf6e" class="a-swim"/>
+          <circle cx="235" cy="160" r="7" fill="#4ce5c4" class="a-swim" style="animation-delay:.5s"/>
+          <circle cx="300" cy="140" r="7" fill="#ffcf6e" class="a-swim" style="animation-delay:1s"/>
+          <text x="245" y="102" fill="#ff9fb3" font-size="14" font-weight="700" text-anchor="middle">Corrente sanguínea</text>
+          <rect x="372" y="102" width="110" height="96" rx="20" fill="#13485c" stroke="#4ce5c4" stroke-width="3"/>
+          <text x="427" y="145" fill="#fff" font-size="15" font-weight="700" text-anchor="middle">Órgão-</text>
+          <text x="427" y="167" fill="#4ce5c4" font-size="15" font-weight="700" text-anchor="middle">alvo</text>
+        </svg>
+      </div>
+    </div>`
   },
 
   { id:'glands_map', menu:'O mapa das glândulas no corpo', title:'Onde ficam as glândulas que produzem os hormônios?', eyebrow:'Parte 2 · Sistema Endócrino', link:'Onde ficam essas glândulas no corpo?', time:'4 min',
@@ -909,7 +832,6 @@ const slides = [
     init: () => {
       let idx = 0, gt = null;
       const sel = k => {
-        pageState().part = k;
         idx = Math.max(0, GL_KEYS.indexOf(k));
         $('body').innerHTML = bodySVG(k);
         $('info').innerHTML = '<b>' + GL[k][0] + '</b>' + GL[k][1];
@@ -930,7 +852,7 @@ const slides = [
         }, 2800);
         timers.push(gt);
       };
-      sel(pageState().part ?? 'cerebro');
+      sel('cerebro');
     }
   },
 
@@ -946,13 +868,12 @@ const slides = [
         <svg viewBox="0 0 480 310" role="img" aria-label="Comparação visual entre ação do GH e da Tireoide">
           <rect x="20" y="25" width="205" height="260" rx="20" fill="#0d2e47" stroke="#5cc8ff" stroke-width="2"/>
           <text x="122" y="58" fill="#5cc8ff" font-size="18" font-weight="800" text-anchor="middle">GH (Estirão)</text>
-          <defs><path id="bone" d="M110 219 Q96 232 92 216 Q89 207 103 198 L103 114 Q91 109 92 99 Q92 84 108 90 Q118 81 125 94 Q132 106 117 115 L117 198 Q132 209 124 219 Q121 225 110 219Z"/></defs>
-          <g transform="translate(0 224)"><g class="growing-bone"><use href="#bone" transform="translate(0 -224)" fill="#e6f3ff"/></g></g>
-          <use href="#bone" transform="translate(0 224) scale(1 .65) translate(0 -224)" fill="none" stroke="#ffcf6e" stroke-width="2.5" stroke-dasharray="5 3"/>
-          <path d="M131 135 h28 M131 88 h28" stroke="#b8d4e3" stroke-width="2"/>
-          <text x="162" y="141" fill="#ffcf6e" font-size="14">Antes</text>
-          <text x="162" y="94" fill="#e6f3ff" font-size="14">Depois</text>
-          <text x="122" y="268" fill="#b8d4e3" font-size="14" text-anchor="middle">Crescimento do osso</text>
+          <g class="a-grow">
+            <rect x="108" y="105" width="28" height="120" rx="12" fill="#e6f3ff"/>
+            <circle cx="112" cy="105" r="14" fill="#e6f3ff"/><circle cx="132" cy="105" r="14" fill="#e6f3ff"/>
+            <circle cx="112" cy="225" r="14" fill="#e6f3ff"/><circle cx="132" cy="225" r="14" fill="#e6f3ff"/>
+          </g>
+          <text x="122" y="268" fill="#b8d4e3" font-size="13.5" text-anchor="middle">Crescimento dos ossos</text>
           <rect x="255" y="25" width="205" height="260" rx="20" fill="#0d2e47" stroke="#4ce5c4" stroke-width="2"/>
           <text x="357" y="58" fill="#4ce5c4" font-size="18" font-weight="800" text-anchor="middle">Tireoide</text>
           <g class="a-pulse">
@@ -1001,16 +922,18 @@ const slides = [
       <div class="card masc"><div class="ico">🔵</div><h2>Testosterona</h2><p>Andrógeno produzido sobretudo pelos <strong>testículos</strong>: desenvolve os órgãos genitais masculinos, musculatura, pelos e voz grave.</p></div>
       <div class="card fem"><div class="ico">🌸</div><h2>Estrógenos e Progesterona</h2><p>Produzidos pelos <strong>ovários</strong>: desenvolvem as mamas e características femininas e regulam o ciclo menstrual.</p></div>
     </div>
-    <section class="vote-box" aria-label="Classificação dos caracteres sexuais">
-      <p class="eyebrow" id="voteCount"></p><h2 id="voteTerm"></h2>
-      <p>Esse caráter sexual é primário ou secundário?</p>
-      <div class="controls"><button data-choice="1">Primário</button><button data-choice="0">Secundário</button></div>
-      <p id="voteFeedback" aria-live="polite"></p>
-      <div class="controls"><button id="voteBack">← Exemplo anterior</button><button id="voteNext">Próximo exemplo →</button></div>
-    </section>
+    <p class="lead" style="margin-top:16px"><strong>Primário</strong> (órgão do sistema genital) ou <strong>secundário</strong> (característica que surge na puberdade)? Toque para classificar:</p>
+    <div class="sort">${[['testículos',1],['pelos pubianos',0],['ovários',1],['mamas',0],['voz mais grave',0],['útero',1],['pelos no rosto',0],['pênis',1]].map(a => '<button data-p="' + a[1] + '">' + a[0] + '</button>').join('')}</div>
     <div class="warn"><strong>Atenção aos anabolizantes:</strong> Esteroides anabolizantes imitam a testosterona, mas sem indicação médica causam danos graves ao fígado, fertilidade, câncer e alterações hormonais em homens e mulheres.</div>
     ${noteBox('Tanto testículos quanto ovários produzem andrógenos (como a testosterona), mas em proporções diferentes. Desfaça a falácia de que "o que é parecido com algo natural não faz mal".')}`,
-    init: initClassification
+    init: () => document.querySelectorAll('.sort button').forEach(b => b.onclick = () => {
+      const pri = b.dataset.p === '1';
+      b.classList.add(pri ? 'pri' : 'sec');
+      if(!b.dataset.done){
+        b.innerHTML += '<br><small>' + (pri ? 'Primário' : 'Secundário') + '</small>';
+        b.dataset.done = 1;
+      }
+    })
   },
 
   { id:'male_path', menu:'Sistema genital masculino: o caminho', title:'No corpo masculino: onde surgem e por onde passam os espermatozoides?', eyebrow:'Parte 3 · Sistemas Genitais', link:'Como os órgãos genitais produzem e conduzem os gametas?', time:'5 min',
@@ -1021,7 +944,7 @@ const slides = [
         'Nos homens, os <strong>testículos</strong> ficam protegidos no <strong>escroto</strong> e produzem espermatozoides da puberdade até o fim da vida.',
         'Dentro de cada testículo, milhares de <strong>túbulos seminíferos</strong> enrolados formam os gametas. Acompanhe o caminho completo:'
       ]),
-      scene('Traço verde: caminho dos espermatozoides. Gotas douradas: secreções que entram no ducto. A bexiga urinária não faz parte do sistema genital; aparece apenas para localizar a região.')
+      scene('A bexiga urinária não faz parte do sistema genital; aparece apenas para localizar a região.')
     )}
     ${noteBox('Peça que identifiquem a uretra como estrutura compartilhada com o sistema urinário. Incentive o uso da nomenclatura científica formal.')}`,
     init: () => stepper([
@@ -1065,15 +988,13 @@ const slides = [
     ${noteBox('Destaque que a quantidade limitada de ovócitos explica por que os ciclos menstruais cessam na menopausa, ao contrário da produção contínua de espermatozoides nos homens.')}`,
     init: () => {
       const sel = k => {
-        pageState().part = k;
         $('fem').innerHTML = femaleSVG(k);
-        if($('projName')) syncProjection();
         $('finfo').innerHTML = '<b>' + FEM[k][0] + '</b>' + FEM[k][1];
         document.querySelectorAll('#fchips button').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === k));
         document.querySelectorAll('#fem [data-f]').forEach(e => e.onclick = () => sel(e.dataset.f));
       };
       document.querySelectorAll('#fchips button').forEach(b => b.onclick = () => sel(b.dataset.f));
-      sel(pageState().part ?? 'ovario');
+      sel('ovario');
     }
   },
 
@@ -1086,7 +1007,7 @@ const slides = [
         'Diferente do sistema masculino, <strong>abertura da uretra e orifício vaginal são canais separados</strong>: o sistema urinário não se mistura ao genital.',
         'O <strong>hímen</strong> é uma dobra fina de pele com formatos variados, que pode ou não se romper no início da vida sexual.'
       ]),
-      art('<div id="vulvaFigure" style="width:100%">' + vulvaSVG() + '</div>',  'Existem muitas variações externas. O ânus não faz parte desse órgão.')
+      art(vulvaSVG(), 'Existem muitas variações externas. O ânus não faz parte desse órgão.')
     )}
     ${noteBox('É muito comum os estudantes acharem que urina e menstruação saem pelo mesmo canal nas mulheres; enfatize a separação mostrada na figura.')}`
   },
@@ -1095,7 +1016,6 @@ const slides = [
     body: s => `${head(s)}
     <div class="sim-box">
       <div id="cyc" class="art" style="min-height:240px;padding:12px"></div>
-      <p class="model-label">Exemplo de ciclo de 28 dias</p>
       <div class="slider-row">
         <span class="day-pill" id="dayLbl">Dia 1</span>
         <input class="range" id="day" type="range" min="1" max="28" value="1" aria-label="Dia do ciclo menstrual">
@@ -1111,14 +1031,13 @@ const slides = [
     </div>
     ${noteBox('Reforce que o ciclo menstrual prepara o organismo para uma possível gravidez e que pílulas anticoncepcionais interferem nesse controle hormonal (tema do capítulo 4 do livro).')}`,
     init: () => {
-      let d = pageState().day ?? 1, t = null;
+      let d = 1, t = null;
       const set = v => {
-        pageState().day = d = v;
+        d = v;
         $('day').value = d;
         $('dayLbl').textContent = 'Dia ' + d;
         $('cyc').innerHTML = cycleSVG(d);
-        $('cinfo').innerHTML = phase(d) + (d === 14 ? '<p><strong>Observe:</strong> O que saiu do ovário e para onde vai?</p>' : '');
-        if(!t) $('cplay').textContent = d === 14 ? 'Continuar após a ovulação →' : '▶ Animar ciclo';
+        $('cinfo').innerHTML = phase(d);
       };
       const stop = () => {
         if(t){ clearInterval(t); t = null; }
@@ -1128,16 +1047,11 @@ const slides = [
       document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { stop(); set(+b.dataset.d); });
       $('cplay').onclick = () => {
         if(t){ stop(); return; }
-        if(d === 14) set(15);
-        t = setInterval(() => {
-          const nextDay = d % 28 + 1;
-          if(nextDay === 14) stop();
-          set(nextDay);
-        }, reduced ? 1400 : 900);
         $('cplay').textContent = '❚❚ Pausar';
+        t = setInterval(() => set(d % 28 + 1), reduced ? 1200 : 550);
         timers.push(t);
       };
-      set(d);
+      set(1);
     }
   },
 
@@ -1145,35 +1059,14 @@ const slides = [
     body: s => `${head(s)}
     ${scene('Esquema simplificado da regulação hormonal entre hipófise, ovário e útero.')}
     ${noteBox('Destaque que é a queda da progesterona que provoca a menstruação. O último passo faz a ponte natural com a apresentação "Gravidez e Parto".')}`,
-    init: () => {
-      const choices = document.createElement('div');
-      choices.className = 'controls';
-      $('ctl').after(choices);
-      const draw = i => {
-        if(i !== 3) pageState().outcome = null;
-        const outcome = pageState().outcome;
-        choices.innerHTML = i !== 3 ? '' : outcome ? '<button data-outcome="">← Escolher outro caminho</button>' :
-          '<button data-outcome="sem">Sem gravidez</button><button data-outcome="com">Com fecundação e implantação</button>';
-        return hormSVG(i, outcome);
-      };
-      choices.onclick = e => {
-        const btn = e.target.closest('[data-outcome]');
-        if(!btn) return;
-        pageState().outcome = btn.dataset.outcome || null;
-        $('sv').innerHTML = draw(3);
-        $('sc').textContent = pageState().outcome === 'sem' ? 'Sem gravidez, o corpo lúteo regride. A queda da progesterona leva à menstruação.' :
-          pageState().outcome === 'com' ? 'Após a implantação, o hCG mantém o corpo lúteo ativo. A progesterona ajuda a manter o endométrio.' :
-          'O corpo lúteo produz progesterona e estrógenos. Escolha um dos dois caminhos.';
-        choices.querySelector('button')?.focus();
-      };
-      stepper([
-        '1. A hipófise libera FSH, que estimula o crescimento do folículo ovariano.',
-        '2. O folículo produz estrógenos. O endométrio fica mais espesso.',
-        '3. Neste exemplo, o pico de LH desencadeia a ovulação por volta do dia 14.',
-        '4. O folículo rompido forma o corpo lúteo, que produz progesterona e estrógenos. Escolha um dos dois caminhos.'
-      ], draw, 3600);
-      if(pageState().outcome) $('sc').textContent = pageState().outcome === 'sem' ? 'A progesterona cai e parte do endométrio é eliminada.' : 'O hCG mantém o corpo lúteo ativo e o endométrio é mantido.';
-    }
+    init: () => stepper([
+      '1. A hipófise libera FSH, estimulando o crescimento do folículo ovariano.',
+      '2. O folículo cresce e produz estrógenos, que fazem o endométrio espessar (fase proliferativa).',
+      '3. Por volta do 14º dia, um pico de LH da hipófise rompe o folículo: é a ovulação.',
+      '4. O folículo rompido vira corpo lúteo, que produz progesterona e estrógenos, enchendo o endométrio de vasos (fase secretória).',
+      '5. Sem fecundação: o corpo lúteo degenera (corpo albicante), a progesterona cai e parte do endométrio sai na menstruação.',
+      '6. Se houver fecundação e implantação, um hormônio (hCG) mantém o corpo lúteo ativo e interrompe a menstruação — tema da próxima aula!'
+    ], hormSVG, 3600)
   },
 
   { id:'climacteric', menu:'Quando os ciclos param: climatério e menopausa', title:'Do primeiro ao último ciclo: climatério e menopausa', eyebrow:'Parte 4 · Ciclo Menstrual e Saúde', link:'E ao longo da vida, os ciclos continuam para sempre?', time:'3 min',
@@ -1210,12 +1103,11 @@ const slides = [
       ];
       const cls = ['mint','masc','fem','mint'];
       const sel = k => {
-        pageState().part = k;
         document.querySelectorAll('#htabs button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.t === k));
         $('hlist').innerHTML = '<div class="grid">' + T[k].map(c => '<div class="card ' + cls[k] + '"><div class="ico">' + c[0] + '</div><p>' + c[1] + '</p></div>').join('') + '</div>';
       };
       document.querySelectorAll('#htabs button').forEach(b => b.onclick = () => sel(+b.dataset.t));
-      sel(pageState().part ?? 0);
+      sel(0);
     }
   }
 ];
@@ -1315,72 +1207,19 @@ const QUIZ = [
   }
 ];
 
-function initClassification(){
-  const items = [
-    ['Testículos',1,'São órgãos do sistema genital.'], ['Pelos pubianos',0,'Seu desenvolvimento é uma mudança corporal da puberdade.'],
-    ['Ovários',1,'São órgãos do sistema genital.'], ['Desenvolvimento das mamas',0,'É uma mudança corporal que ocorre na puberdade.'],
-    ['Voz mais grave',0,'O crescimento da laringe altera o tom de voz.'], ['Útero',1,'É um órgão do sistema genital.'],
-    ['Crescimento de pelos no rosto',0,'É uma mudança corporal associada à puberdade.'], ['Pênis',1,'É um órgão do sistema genital.']
-  ];
-  const st = pageState();
-  st.votes ??= {};
-  st.item ??= 0;
-  const draw = () => {
-    const [name,expected,reason] = items[st.item], choice = st.votes[st.item];
-    $('voteTerm').textContent = name;
-    $('voteCount').textContent = `Votação da turma · ${st.item+1} de ${items.length}`;
-    $('voteFeedback').textContent = choice === undefined ? '' : `${choice === expected ? 'Acertou!' : 'Vamos conferir.'} ${expected ? 'Primário' : 'Secundário'}. ${reason}`;
-    for(const b of document.querySelectorAll('[data-choice]')){
-      b.disabled = choice !== undefined;
-      b.setAttribute('aria-pressed',String(Number(b.dataset.choice) === choice));
-    }
-    $('voteBack').disabled = st.item === 0;
-    $('voteNext').disabled = choice === undefined;
-    $('voteNext').textContent = st.item === items.length-1 ? 'Recomeçar votação' : 'Próximo exemplo →';
-  };
-  document.querySelectorAll('[data-choice]').forEach(b => b.onclick = () => {st.votes[st.item] = Number(b.dataset.choice); draw();});
-  $('voteBack').onclick = () => {st.item--; draw();};
-  $('voteNext').onclick = () => {
-    if(st.item === items.length-1){st.item = 0; st.votes = {};} else st.item++;
-    draw();
-  };
-  draw();
-}
-
 const REVIEW = [
-  'Dê um exemplo de mudança da puberdade e outro de mudança da adolescência ligada à vida social.',
-  'Use setas para mostrar como a hipófise se comunica com os ovários ou os testículos.',
-  'Desenhe o trajeto dos espermatozoides e marque onde entram os líquidos que formam o sêmen.',
-  'Faça um esquema mostrando por onde saem a urina e o fluxo menstrual no corpo feminino.',
-  'Represente em três quadros o que acontece no ovário e no útero entre a ovulação e a próxima menstruação.',
-  'Escolha um cuidado de saúde estudado e explique por que ele é importante.'
+  { n:'1', q:'Diferencie puberdade de adolescência e cite mudanças comuns a todos, típicas dos meninos e típicas das meninas.' },
+  { n:'2', q:'Explique como o cérebro e a hipófise agem pelo sangue sobre tireoide, ovários e testículos, e diferencie caracteres primários de secundários.' },
+  { n:'3', q:'Descreva o caminho dos espermatozoides dos testículos até a uretra e explique a diferença entre espermatozoide e sêmen.' },
+  { n:'4', q:'Cite a função dos ovários, tubas uterinas, útero (endométrio) e vagina, e explique a diferença da uretra entre homens e mulheres.' },
+  { n:'5', q:'Explique como ovulação e menstruação se ligam no ciclo menstrual (FSH, LH, estrógenos e progesterona) e diferencie climatério de menopausa.' },
+  { n:'6', q:'Cite cuidados de higiene e prevenção trabalhados na aula (acne, higiene íntima, vacina contra o HPV, consultas médicas e riscos dos anabolizantes).' }
 ];
+
 const total = slides.length + QUIZ.length + 1;
-const quizStart = slides.length;
-const firstQuiz = [0,1,2];
-const secondQuiz = [3,4,5,6];
-const names = [...slides.map(s=>s.menu), ...QUIZ.map((_,i)=>'Quiz · Questão '+(i+1)), 'Revisão no caderno'];
-const lessons = [
-  {name:'Aula 1 · Puberdade e hormônios', pages:[...slides.slice(0,10).map((_,i)=>i), ...firstQuiz.map(i=>quizStart+i)]},
-  {name:'Aula 2 · Sistemas genitais e ciclo', pages:[...slides.slice(10).map((_,i)=>i+10), ...secondQuiz.map(i=>quizStart+i), total-1]}
-];
-const order = lessons.flatMap(l=>l.pages);
-for(const lesson of lessons){
-  const group = document.createElement('optgroup');
-  group.label = lesson.name;
-  for(const i of lesson.pages) group.append(new Option(names[i],i));
-  $('menu').append(group);
-}
 $('progress').max = total;
-function move(by){
-  const path = quizOnly && current >= quizStart ? [...firstQuiz,...secondQuiz].map(i=>quizStart+i).concat(total-1) : order;
-  const target = path[path.indexOf(current)+by];
-  if(target !== undefined) go(target);
-}
-function reviewTopic(i){
-  go(QUIZ[i].review, quizStart+i);
-}
-$('returnQuiz').onclick = () => {if(reviewing !== null) go(reviewing);};
+[...slides.map(s => s.menu), ...QUIZ.map((_, i) => 'Quiz ' + (i + 1)), 'Atividade de Revisão']
+  .forEach((t, i) => $('menu').add(new Option(`${i + 1}. ${t}`, i)));
 
 function quizScore(){
   return QUIZ.reduce((acc, q, i) => acc + (answers[i]?.checked && answers[i].choice === q.ans ? 1 : 0), 0);
@@ -1388,14 +1227,11 @@ function quizScore(){
 
 function render(){
   clearTimers();
-  sub = pageState().sub ?? 0;
+  sub = 0;
   $('menu').value = current;
-  const position = order.indexOf(current)+1;
-  $('progress').value = position;
-  $('count').textContent = (lessons[0].pages.includes(current) ? 'Aula 1' : 'Aula 2') + ' · ' + position + ' / ' + total;
-  $('returnQuiz').hidden = reviewing === null;
-  document.body.classList.remove('projecting');
-  $('prev').disabled = current === 0 || (quizOnly && current === quizStart);
+  $('progress').value = current + 1;
+  $('count').textContent = (current + 1) + ' / ' + total;
+  $('prev').disabled = current === 0;
   $('next').disabled = current === total - 1;
 
   if(current < slides.length){
@@ -1405,7 +1241,6 @@ function render(){
     } else {
       $('main').innerHTML = `<div class="slide-enter">${s.body(s)}</div>`;
       if(s.init) s.init();
-      if([10,12,13].includes(current)) initProjection();
     }
   } else if(current < slides.length + QUIZ.length){
     renderQuiz(current - slides.length);
@@ -1414,68 +1249,13 @@ function render(){
   }
 }
 
-function projectionNames(){
-  if(current === 10) return ['Túbulos seminíferos','Epidídimo','Ducto deferente','Glândulas seminais e próstata','Uretra'];
-  return current === 12 ? Object.values(FEM).map(part=>part[0]) : externalNames;
-}
-function syncProjection(){
-  const st = pageState();
-  const names = projectionNames();
-  const idx = current === 10 ? st.step ?? 0 : current === 12 ? Object.keys(FEM).indexOf(st.part) : st.external ?? 2;
-  document.body.classList.toggle('projecting', !!st.expanded);
-  const panel = $('projectPanel');
-  panel.classList.toggle('all-labels',!!st.allLabels);
-  $('projName').textContent = names[idx];
-  $('projectionToggle').textContent = st.expanded ? '← Voltar à apresentação' : 'Ampliar esquema';
-  $('projectionToggle').setAttribute('aria-expanded',String(!!st.expanded));
-  $('labelToggle').textContent = st.allLabels ? 'Mostrar só a seleção' : 'Mostrar todos os nomes';
-  $('labelToggle').setAttribute('aria-pressed',String(!!st.allLabels));
-  if($('choosePart')) $('choosePart').value = idx;
-  if(current === 13) $('vulvaFigure').innerHTML = vulvaSVG(st.expanded ? idx : null);
-}
-function initProjection(){
-  const panel = document.querySelector('#main .art');
-  panel.id = 'projectPanel';
-  const bar = document.createElement('div');
-  bar.className = 'project-bar';
-  bar.innerHTML = `<button id="projectionToggle" aria-controls="projectPanel">Ampliar esquema</button>
-    <button class="zoom-only" id="labelToggle">Mostrar todos os nomes</button>`;
-  panel.prepend(bar);
-  const title = document.createElement('h2');
-  title.id = 'projName'; title.className = 'zoom-only';
-  title.setAttribute('aria-live','polite');
-  bar.after(title);
-  if(current !== 10){
-    const selector = document.createElement('select');
-    selector.className = 'zoom-only';
-    selector.id = 'choosePart';
-    selector.setAttribute('aria-label','Estrutura em destaque');
-    projectionNames().forEach((name,i)=>selector.add(new Option(name,i)));
-    selector.onchange = () => {
-      const i = Number(selector.value);
-      if(current === 12) document.querySelectorAll('#fchips button')[i].click();
-      else {pageState().external = i; syncProjection();}
-    };
-    bar.append(selector);
-  }
-  $('projectionToggle').onclick = () => {
-    pageState().expanded = !pageState().expanded;
-    syncProjection();
-    $('projectionToggle').scrollIntoView({block:'nearest'});
-  };
-  $('labelToggle').onclick = () => {pageState().allLabels = !pageState().allLabels; syncProjection();};
-  syncProjection();
-}
-
 function renderQuiz(idx){
-  const q = QUIZ[idx], a = answers[idx] || {};
-  const group = firstQuiz.includes(idx) ? firstQuiz : secondQuiz;
-  const score = group.filter(i=>answers[i]?.checked && answers[i].choice === QUIZ[i].ans).length;
+  const q = QUIZ[idx], a = answers[idx] || {}, score = quizScore();
   $('main').innerHTML = `<div class="slide-enter">
-    <div class="eyebrow"><span>Fechamento da aula · ${group.indexOf(idx)+1} de ${group.length}</span><span class="tag">${q.topic}</span></div>
+    <div class="eyebrow"><span>Desafio da turma · ${idx + 1} de ${QUIZ.length}</span><span class="tag">${q.topic}</span></div>
     <div class="quiz-bar">
       <div class="quiz-dots">
-        ${group.map(i => {
+        ${QUIZ.map((_, i) => {
           const st = answers[i];
           let cls = 'qdot';
           if(i === idx) cls += ' cur';
@@ -1483,7 +1263,7 @@ function renderQuiz(idx){
           return `<button class="${cls}" onclick="go(${slides.length + i})" aria-label="Questão ${i + 1}">${i + 1}</button>`;
         }).join('')}
       </div>
-      <span class="score-pill">Acertos nesta aula: ${score} / ${group.length}</span>
+      <span class="score-pill">Placar: ${score} / ${QUIZ.length}</span>
     </div>
     <h1>${q.q}</h1>
     <div class="options">
@@ -1501,8 +1281,8 @@ function renderQuiz(idx){
     <div class="controls" style="justify-content:flex-start;margin-top:18px">
       <button onclick="check(${idx})" ${a.choice===undefined || a.checked ? 'disabled' : ''}>Conferir resposta</button>
       <button onclick="retry(${idx})" ${a.choice===undefined && !a.checked ? 'disabled' : ''}>Tentar novamente</button>
-      ${a.checked ? `<button onclick="reviewTopic(${idx})">Rever conteúdo da aula ↗</button>
-      <button class="btn-primary" onclick="move(1)">${idx === 2 && !quizOnly ? 'Iniciar aula 2 →' : idx < QUIZ.length - 1 ? 'Próxima questão →' : 'Ir para Revisão Final →'}</button>` : ''}
+      ${a.checked ? `<button onclick="go(${q.review})">Rever conteúdo da aula ↗</button>
+      <button class="btn-primary" onclick="go(${current + 1})">${idx < QUIZ.length - 1 ? 'Próxima questão →' : 'Ir para Revisão Final →'}</button>` : ''}
     </div>
     ${a.checked ? `<div class="feedback" aria-live="polite"><strong>${a.choice===q.ans?'✔ Correto!':'✖ Vamos revisar:'}</strong> ${q.exp}</div>` : ''}
   </div>`;
@@ -1520,13 +1300,10 @@ window.check = idx => {
 window.retry = idx => { delete answers[idx]; renderQuiz(idx); };
 window.resetQuiz = () => {
   Object.keys(answers).forEach(k => delete answers[k]);
-  quizOnly = true;
-  pageState().question = 0;
   go(slides.length);
 };
 
 function renderFinal(){
-  const i = pageState().question ?? 0;
   const score = quizScore();
   const answered = Object.values(answers).filter(a => a && a.checked).length;
   $('main').innerHTML = `<div class="slide-enter">
@@ -1541,22 +1318,19 @@ function renderFinal(){
         <button onclick="resetQuiz()">↻ Refazer o Quiz</button>
       </div>
     </div>
-    <article class="review-prompt" aria-live="polite">
-      <p class="eyebrow">Questão ${i+1} de ${REVIEW.length}</p>
-      <p>${REVIEW[i]}</p>
-    </article>
-    <div class="controls">
-      <button id="revBack" ${i === 0 ? 'disabled' : ''}>← Questão anterior</button>
-      <button id="revNext" ${i === REVIEW.length-1 ? 'disabled' : ''}>Próxima questão →</button>
+    <div class="rev-grid">
+      ${REVIEW.map(item => `
+        <div class="rev-card">
+          <p><strong>${item.n}.</strong> ${item.q}</p>
+        </div>
+      `).join('')}
     </div>
   </div>`;
-  $('revBack').onclick = () => {pageState().question = i-1; renderFinal();};
-  $('revNext').onclick = () => {pageState().question = i+1; renderFinal();};
 }
 
 window.setSub = n => {
   clearTimers();
-  pageState().sub = sub = n;
+  sub = n;
   const s = slides[current];
   if(s && s.body){
     $('main').innerHTML = s.body(s);
@@ -1564,16 +1338,14 @@ window.setSub = n => {
   }
 };
 
-function go(n, returnTo = null){
-  reviewing = returnTo;
-  if(n < quizStart && returnTo === null) quizOnly = false;
+function go(n){
   current = Math.max(0, Math.min(total - 1, n));
   render();
   window.scrollTo(0, 0);
 }
 
-$('prev').onclick = () => move(-1);
-$('next').onclick = () => move(1);
+$('prev').onclick = () => go(current - 1);
+$('next').onclick = () => go(current + 1);
 $('menu').onchange = e => go(Number(e.target.value));
 $('motion').onclick = () => {
   reduced = !reduced;
@@ -1586,10 +1358,9 @@ $('full').onclick = () => {
   else document.documentElement.requestFullscreen?.().catch(() => {});
 };
 document.onkeydown = e => {
-  if(e.key === 'Escape' && document.body.classList.contains('projecting')){ $('projectionToggle').click(); return; }
   if(['SELECT','INPUT','TEXTAREA'].includes(e.target.tagName)) return;
-  if(e.key === 'ArrowRight'){ e.preventDefault(); move(1); }
-  if(e.key === 'ArrowLeft'){ e.preventDefault(); move(-1); }
+  if(e.key === 'ArrowRight'){ e.preventDefault(); go(current + 1); }
+  if(e.key === 'ArrowLeft'){ e.preventDefault(); go(current - 1); }
 };
 
 render();
